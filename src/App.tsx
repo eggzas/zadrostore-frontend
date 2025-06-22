@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { Button } from './components/ui/button';
+import Catalog from './components/Catalog';
 
 declare global {
   interface Window {
@@ -8,44 +10,41 @@ declare global {
 
 const App: React.FC = () => {
   useEffect(() => {
-    if (window.Telegram?.WebApp?.ready) {
-      window.Telegram.WebApp.ready();
-    }
+    const tg = window.Telegram?.WebApp;
+    tg?.ready(); // вызываем один раз для инициализации
   }, []);
 
   const handleSendData = () => {
-    if (window.Telegram?.WebApp?.sendData) {
-      const payload = {
-        from: 'react',
-        test: true,
-        timestamp: new Date().toISOString(),
-      };
-      window.Telegram.WebApp.sendData(JSON.stringify(payload));
-    } else {
-      console.warn('Telegram WebApp not available');
-    }
+    const tg = window.Telegram?.WebApp;
+
+    const payload = {
+      from: 'react',
+      via: 'custom_button',
+      timestamp: new Date().toISOString(),
+    };
+
+    console.log("📤 CUSTOM SEND:", payload);
+    tg?.sendData(JSON.stringify(payload));
   };
 
   return (
-    <div style={{ padding: 24, fontFamily: 'sans-serif' }}>
-      <h1>Zadrostore Mini App</h1>
-      <button
+    <div className="p-6 font-sans bg-red-500 text-white min-h-screen">
+      <h1 className="text-3xl font-bold mb-4">Zadrostore Mini App</h1>
+      <p className="text-lg mb-6">Нажми кнопку внизу Telegram ⬇️</p>
+
+      <Button
+        variant="secondary"
+        size="lg"
         onClick={handleSendData}
-        style={{
-          padding: '12px 24px',
-          fontSize: '16px',
-          borderRadius: '8px',
-          background: '#0088cc',
-          color: '#fff',
-          border: 'none',
-          cursor: 'pointer',
-        }}
       >
         Отправить в Django
-      </button>
+      </Button>
+
+      <div className="mt-10">
+        <Catalog />
+      </div>
     </div>
   );
 };
 
 export default App;
-
